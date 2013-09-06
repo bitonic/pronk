@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -fsimpl-tick-factor=150 #-}
-{-# LANGUAGE BangPatterns, RecordWildCards #-}
+{-# LANGUAGE BangPatterns, RecordWildCards, CPP #-}
 
 module Network.HTTP.LoadTest.Analysis
     (
@@ -12,7 +12,9 @@ module Network.HTTP.LoadTest.Analysis
 
 import Criterion.Analysis (SampleAnalysis, analyseSample)
 import Network.HTTP.LoadTest.Types (Analysis(..), Basic(..), Summary(..))
+#if __GLASGOW_HASKELL__ < 706
 import Prelude hiding (catch)
+#endif
 import Statistics.Quantile (weightedAvg)
 import qualified Data.Vector as V
 import qualified Data.Vector.Generic as G

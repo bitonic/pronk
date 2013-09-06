@@ -1,4 +1,4 @@
-{-# LANGUAGE BangPatterns, RecordWildCards #-}
+{-# LANGUAGE BangPatterns, RecordWildCards, CPP #-}
 
 module Network.HTTP.LoadTest
     (
@@ -20,7 +20,9 @@ import Data.List (nub)
 import Data.Time.Clock.POSIX (POSIXTime, getPOSIXTime)
 import Network.HTTP.Conduit
 import Network.HTTP.LoadTest.Types
+#if __GLASGOW_HASKELL__ < 706
 import Prelude hiding (catch)
+#endif
 import qualified Data.ByteString.Lazy as L
 import qualified Data.Vector as V
 import qualified Data.Vector.Algorithms.Intro as I
@@ -69,7 +71,7 @@ client Config{..} mgr interval = loop 0 []
     issueRequest :: ResourceT IO (Response L.ByteString)
     issueRequest = httpLbs (clear $ fromReq request) mgr
                    `catch` (throwIO . NetworkError)
-      where clear r = r { checkStatus = \_ _ -> Nothing
+      where clear r = r { checkStatus = \_ _ _ -> Nothing
                         , responseTimeout = Nothing
                         }
     timedRequest :: ResourceT IO Event
